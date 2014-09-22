@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[public static function ${1:functionName}(${2:}):${3:Void} {
+		${4://...}
+}]]></content>
+    <tabTrigger>static</tabTrigger>
+    <scope>source.haxe.2</scope>
+    <description>| public static function name(...):... { ... }</description>
+    <multiTabTrigger>public function</multiTabTrigger>
+</snippet>

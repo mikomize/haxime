@@ -1,0 +1,7 @@
+<snippet>
+    <content><![CDATA[private static var ${1:name}:${2:Void}]]></content>
+    <tabTrigger>static</tabTrigger>
+    <scope>source.haxe.2</scope>
+    <description>| private static var name:...}</description>
+    <multiTabTrigger>var private</multiTabTrigger>
+</snippet>

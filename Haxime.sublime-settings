@@ -1,0 +1,11 @@
+{
+	"haxime_build_hxml_file": "build.hxml",
+	"haxime_cwd_path": "",
+
+	"haxime_enabled": true,
+	"haxime_build_system_enabled": true,
+	"haxime_auto_completion_enabled": true,
+	"haxime_auto_completion_throttle": 0.1,
+	"haxime_completion_server_enabled": true,
+	"haxime_server_port": 6113
+}

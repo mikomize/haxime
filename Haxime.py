@@ -115,6 +115,7 @@ class Haxime:
 			if self.get_setting(view, self.parse_errors_from_auto_completion_settings_key):
 				self.handle_error(output.decode())
 
+			print(output)
 			sublime.status_message("Haxe server completion failed due to errors in code")
 			return []
 

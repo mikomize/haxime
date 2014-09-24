@@ -63,14 +63,16 @@ class Haxime:
 			raise Exception('could not determine working directory (save your file first?)')
 
 		dirname = os.path.dirname(tmp)
-		settings_cwd = view.settings().get(self.cwd_path_settings_key)
+		print(dirname)
+		settings_cwd = self.get_setting(view, self.cwd_path_settings_key)
+		print(settings_cwd)
 		if settings_cwd != "":
 			dirname += "/" + settings_cwd
 		return dirname
 
 
 	def get_build_hxml_path(self, view):
-		path = self.get_cwd(view) + "/" + view.settings().get(self.build_hxml_file_settings_key)
+		path = self.get_cwd(view) + "/" + self.get_setting(view, self.build_hxml_file_settings_key)
 		if os.path.exists(path) == False:
 			raise BuildHxmlNotFound(path)
 
@@ -112,7 +114,7 @@ class Haxime:
 		except:
 			if self.get_setting(view, self.parse_errors_from_auto_completion_settings_key):
 				self.handle_error(output.decode())
-				
+
 			sublime.status_message("Haxe server completion failed due to errors in code")
 			return []
 

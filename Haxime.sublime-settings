@@ -7,5 +7,6 @@
 	"haxime_auto_completion_enabled": true,
 	"haxime_auto_completion_throttle": 0.1,
 	"haxime_completion_server_enabled": true,
+	"haxime_parse_errors_from_auto_completion": true,
 	"haxime_server_port": 6113
 }

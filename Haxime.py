@@ -14,6 +14,7 @@ class Haxime:
 	auto_completion_enabled_settings_key = "haxime_auto_completion_enabled"
 	auto_completion_throttle_settings_key = "haxime_auto_completion_throttle"
 	auto_completion_server_enabled_settings_key = "haxime_completion_server_enabled"
+	parse_errors_from_auto_completion_settings_key = "haxime_parse_errors_from_auto_completion"
 	server_port_settings_key = "haxime_server_port"
 
 	haxe_exec_path_settings_key = "haxime_haxe_exec_path"
@@ -26,6 +27,8 @@ class Haxime:
 	scope_name = "source.haxe.2"
 
 	servers = {}
+
+	errors = []
 
 	def get_plugin_settings(self):
 		return sublime.load_settings("Haxime.sublime-settings")
@@ -107,7 +110,10 @@ class Haxime:
 			root = ET.fromstring(output)
 
 		except:
-			print("not an xml response, probably some error")
+			if self.get_setting(view, self.parse_errors_from_auto_completion_settings_key):
+				self.handle_error(output.decode())
+				
+			sublime.status_message("Haxe server completion failed due to errors in code")
 			return []
 
 		res = []
@@ -148,6 +154,71 @@ class Haxime:
 		hndl.wait()
 		return hndl.stderr.raw.readall().decode()
 
+	def get_view_by_file_name(self, file_name):
+		window = sublime.active_window()
+		for view in window.views():
+			if file_name == view.file_name():
+				return view
+
+		return None
+
+	def clear_drawn_errors(self):
+		for view in sublime.active_window().views():
+			view.erase_regions("haxime_error")
+
+	def draw_errors(self):
+		self.clear_drawn_errors()
+
+		for file_name in self.errors:
+			view = self.get_view_by_file_name(file_name)
+			if (view == None):
+				continue
+
+			regions = []
+			for error in self.errors[file_name]:
+				print(error);
+				region = sublime.Region(view.text_point(error["row"]-1, error["begin"]), view.text_point(error["row"]-1, error["end"]))
+				regions.append(region)
+
+			view.add_regions("haxime_error", regions, "keyword", "dot");
+
+	def remove_error(self, file_name, row):
+		if file_name not in self.errors:
+			return
+
+		errors = self.errors[file_name];
+
+		toRemove = []
+		for error in errors:
+			if error["row"] == row:
+				toRemove.append(error)
+
+
+		for error in toRemove:
+			errors.remove(error)
+
+		if len(errors) == 0:
+			del self.errors[file_name]
+
+		self.draw_errors()
+
+
+
+	def handle_error(self, error):
+		view = sublime.active_window().active_view()
+		m = re.findall(r"([\w\/]+\.hx):(\d+):\scharacters\s(\d+)\-(\d+)\s:\s(.*)",error)
+		self.errors = {}
+		for t in m:
+			key = self.get_cwd(view) + "/" + t[0]
+			print("key: " + key)
+			if key not in self.errors:
+				self.errors[key] = []
+
+			self.errors[key].append({"row": int(t[1]), "begin": int(t[2]), "end": int(t[3]), "description": t[4]})
+
+		self.draw_errors()
+		return
+
 	def call_haxe(self, view, args):
 		settings = view.settings()
 		env = os.environ.copy()
@@ -167,6 +238,16 @@ class Haxime:
 haxime = Haxime()
 
 class HaximeWatcher(sublime_plugin.EventListener):
+
+	def on_modified(self, view):
+		if view.file_name() == None or not haxime.plugin_enabled(view):
+			return
+		row, col = view.rowcol(view.sel()[0].b)
+		haxime.remove_error(view.file_name(), row+1)
+
+	def on_load(self, view):
+		if haxime.plugin_enabled(view):
+			haxime.draw_errors()
 
 	def on_query_completions(self, view, prefix, locations):
 		if haxime.plugin_enabled(view) and haxime.auto_completion_enabled(view):
@@ -196,7 +277,9 @@ class HaximeBuild(sublime_plugin.WindowCommand):
  		res =  haxime.build(self.window.active_view())
  		if res == "":
  			res = "[Build success]"
+ 			haxime.clear_drawn_errors()
  		else:
+ 			haxime.handle_error(res)
  			res = "[Build fail]\n" + res
  		self.output_view.run_command('append', {'characters': res, 'force': True, 'scroll_to_end': True})
 

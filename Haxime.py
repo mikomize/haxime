@@ -63,9 +63,7 @@ class Haxime:
 			raise Exception('could not determine working directory (save your file first?)')
 
 		dirname = os.path.dirname(tmp)
-		print(dirname)
 		settings_cwd = self.get_setting(view, self.cwd_path_settings_key)
-		print(settings_cwd)
 		if settings_cwd != "":
 			dirname += "/" + settings_cwd
 		return dirname
@@ -99,15 +97,17 @@ class Haxime:
 			return []
 		pref = m.group(0)
 
-		if self.auto_completion_server_enabled(view) == False:
-			return []
+		#if self.auto_completion_server_enabled(view) == False:
+		#	return []
 
-		self.ensure_completion_server(view)
+		#self.ensure_completion_server(view)
 		display = os.path.relpath(view.file_name(), self.get_cwd(view)) + '@' + str(locations[0] - len(pref))
 		view.run_command('save');
-		hndl = self.call_haxe(view, ['--connect', str(self.get_setting(view, self.server_port_settings_key)), '--no-output', '--display', display, self.get_build_hxml_path(view)])
+		#hndl = self.call_haxe(view, ['--connect', str(self.get_setting(view, self.server_port_settings_key)), '--no-output', '--display', display, self.get_build_hxml_path(view)])
+		hndl = self.call_haxe(view, ['--no-output','--no-opt', '--display', display, self.get_build_hxml_path(view)])
 		hndl.wait();
 		output =  hndl.stderr.raw.readall()
+		print(output)
 		try:
 			root = ET.fromstring(output)
 
@@ -126,9 +126,16 @@ class Haxime:
 				signature = item.find("t").text
 
 				toPaste = name
-				snippet = self.make_snippet(signature)
-				if snippet != "":
-					toPaste += "(" + snippet + ")"
+				print("sig")
+				print(signature)
+				if signature != None:
+					snippet = self.make_snippet(signature)
+					if snippet != "":
+						toPaste += "(" + snippet + ")"
+
+				else:
+					signature = "package"
+
 				res.append((name + "\t" + signature, toPaste))
 
 		elif root.tag == "type":
@@ -255,6 +262,9 @@ class HaximeWatcher(sublime_plugin.EventListener):
 	def on_query_completions(self, view, prefix, locations):
 		if haxime.plugin_enabled(view) and haxime.auto_completion_enabled(view):
 			return haxime.get_completion(view, prefix, locations)
+
+	#def on_post_save(self, view):
+	#	print ("ASDASD")
 
 
 

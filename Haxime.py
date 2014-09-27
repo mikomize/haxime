@@ -97,14 +97,17 @@ class Haxime:
 			return []
 		pref = m.group(0)
 
-		#if self.auto_completion_server_enabled(view) == False:
-		#	return []
+		
 
-		#self.ensure_completion_server(view)
 		display = os.path.relpath(view.file_name(), self.get_cwd(view)) + '@' + str(locations[0] - len(pref))
 		view.run_command('save');
-		#hndl = self.call_haxe(view, ['--connect', str(self.get_setting(view, self.server_port_settings_key)), '--no-output', '--display', display, self.get_build_hxml_path(view)])
-		hndl = self.call_haxe(view, ['--no-output','--no-opt', '--display', display, self.get_build_hxml_path(view)])
+
+		if self.auto_completion_server_enabled(view):
+			self.ensure_completion_server(view)
+			hndl = self.call_haxe(view, ['--connect', str(self.get_setting(view, self.server_port_settings_key)), '--no-opt', '--no-output', '--display', display, self.get_build_hxml_path(view)])
+		else:
+			hndl = self.call_haxe(view, ['--no-output','--no-opt', '--display', display, self.get_build_hxml_path(view)])
+
 		hndl.wait();
 		output =  hndl.stderr.raw.readall()
 		print(output)
@@ -116,7 +119,7 @@ class Haxime:
 				self.handle_error(output.decode())
 
 			print(output)
-			sublime.status_message("Haxe server completion failed due to errors in code")
+			sublime.status_message("Haxe completion failed due to errors in code")
 			return []
 
 		res = []
@@ -149,7 +152,7 @@ class Haxime:
 	def make_snippet(self, tmp):
 		m = re.findall(r"(\w+\s?:\s?(?:\([\w\s,\-><\.\(\)]+\)|[\w\s,><\.]+))", tmp.strip())
 
-		if len(m) > 0 and re.match(r"^this", m[0]) != None: #yeah i suck and regexp, too lazy merge to it with the one above
+		if len(m) > 0 and re.match(r"^this", m[0]) != None: #yeah i suck at regexp, too lazy merge to it with the one above
 			m.pop(0)
 		toJoin = []
 		i = 0
@@ -262,11 +265,6 @@ class HaximeWatcher(sublime_plugin.EventListener):
 	def on_query_completions(self, view, prefix, locations):
 		if haxime.plugin_enabled(view) and haxime.auto_completion_enabled(view):
 			return haxime.get_completion(view, prefix, locations)
-
-	#def on_post_save(self, view):
-	#	print ("ASDASD")
-
-
 
 class HaximeBuild(sublime_plugin.WindowCommand):
  	def run(self):

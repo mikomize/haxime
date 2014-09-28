@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[private override function ${1:functionName}(${2:}):${3:Void} {
+		${4://...}
+}]]></content>
+    <tabTrigger>private</tabTrigger>
+    <scope>source.haxe.2</scope>
+    <description>| private override function name(...):... { ... }</description>
+    
+</snippet>

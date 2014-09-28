@@ -1,0 +1,9 @@
+<snippet>
+    <content><![CDATA[public override function ${1:functionName}(${2:}):${3:Void} {
+		${4://...}
+}]]></content>
+    <tabTrigger>public</tabTrigger>
+    <scope>source.haxe.2</scope>
+    <description>| public override function name(...):... { ... }</description>
+    
+</snippet>

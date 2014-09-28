@@ -5,5 +5,5 @@
     <tabTrigger>static</tabTrigger>
     <scope>source.haxe.2</scope>
     <description>| public static function name(...):... { ... }</description>
-    <multiTabTrigger>public function</multiTabTrigger>
+    <multiTabTrigger>public,function</multiTabTrigger>
 </snippet>

@@ -3,5 +3,5 @@
     <tabTrigger>static</tabTrigger>
     <scope>source.haxe.2</scope>
     <description>| private static var name:...}</description>
-    <multiTabTrigger>var private</multiTabTrigger>
+    <multiTabTrigger>var,private</multiTabTrigger>
 </snippet>

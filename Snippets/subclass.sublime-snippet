@@ -9,4 +9,5 @@
     <tabTrigger>subclass</tabTrigger>
     <scope>source.haxe.2</scope>
     <description>| class ... extends ... { public function new () { ... } }</description>
+    <multiTabTrigger>class</multiTabTrigger>
 </snippet>

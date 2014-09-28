@@ -5,5 +5,5 @@
     <tabTrigger>override</tabTrigger>
     <scope>source.haxe.2</scope>
     <description>| public override function name(...):... { ... }</description>
-    <multiTabTrigger>public function</multiTabTrigger>
+    <multiTabTrigger>public,function</multiTabTrigger>
 </snippet>

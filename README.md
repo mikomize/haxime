@@ -49,8 +49,8 @@ I recommend configuring haxime using project settings. Example poject setting:
 * `haxime_enabled"` : enables/disabled plugin. Default `true`
 * `haxime_build_system_enabled` : enables/disabled plugin build system. Default `true`
 * `haxime_auto_completion_enabled` : enables/disables plugin auto completion. Default `true`
-*	`haxime_completion_server_enabled` : enables/disables use of haxe completion server for plugin auto completion. Default `true`
-* `haxime_parse_errors_from_auto_completion` : haxe autocompletion server while auto completing tries to suppres all errors to provide completion, however sometimes it cannot be done and in that case, completion server returns "compilation" errors that caused him to fail. Setting it to `true` enables error highlighting similar to highlighting regular build errors. The reason you might not want to have it turned on is that completion server does not really compile in the way that normal build would do and that can result in strange errors that does not apply to your project. Especially it happens when it comes to use macros. Default `true`
+* `haxime_completion_server_enabled` : enables/disables use of haxe completion server for plugin auto completion. When `true` plugin uses cache server wich suppose to be faster then completion without it but since i didnt provide any good invalidation, generates problems especially while creating new files. I suggest to leave it disabled. Default `false`
+* `haxime_parse_errors_from_auto_completion` : haxe autocompletion while auto completing tries to suppres all errors to provide completion, however sometimes it cannot be done and in that case, completion server returns "compilation" errors that caused him to fail. Setting it to `true` enables error highlighting similar to highlighting regular build errors. The reason you might not want to have it turned on is that completion server does not really compile in the way that normal build would do and that can result in strange errors that does not apply to your project. Especially it happens when it comes to use macros. Default `true`
 * `haxime_server_port` : provides port number used for setting up completion server, useful for multiple haxe instances used in diffrent projects. Default `6113`
 * `haxime_haxe_exec_path` : path to haxe binary. Default `haxe`
 * `haxime_haxe_std_path` : path to haxe std lib. Default `""`
@@ -60,3 +60,4 @@ I recommend configuring haxime using project settings. Example poject setting:
 * Make sure that your desired haxe instance is installed and add to system paths. If not or using multiple haxe instances make sure that your paths are configured in project settings (or user settings)
 * If completion server does not seem to work, make sure that server port is free. Server port can be configured in settings.
 * Due to my limited access to windows os it might happen that some of the features wont work on it. Feel free to let me know if that happens via github issues system, i'll try to do my best to fix it.
+* Also i have experienced some weird errors from autocompletion server when using macros in Haxe 3.0.1, switching to 3.1.3 fixed everything.

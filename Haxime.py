@@ -105,11 +105,10 @@ class Haxime:
 
         display = os.path.relpath(view.file_name(), self.get_cwd(view)) + '@' + str(locations[0] - len(pref))
         view.run_command('save')
-
+        build_path = self.get_build_hxml_path(view)
         if self.auto_completion_server_enabled(view):
             self.ensure_completion_server(view)
             port = str(self.get_setting(view, self.server_port_settings_key))
-            build_path = self.get_build_hxml_path(view)
             hndl = self.call_haxe(view, ['--connect', port, '--no-opt', '--no-output', '--display', display, build_path])
         else:
             hndl = self.call_haxe(view, ['--no-output', '--no-opt', '--display', display, build_path])
@@ -135,8 +134,6 @@ class Haxime:
                 signature = item.find("t").text
 
                 toPaste = name
-                print("sig")
-                print(signature)
                 if signature is not None:
                     snippet = self.make_snippet(signature)
                     if snippet != "":
